@@ -1,20 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Todo } from "./toDo.js";
 import { Form } from "./toDoForm.js";
 
 //create your first component
-const tasks = [
-	{
-		name: "Add a Task",
-		status: false
-	}
-];
 
 export function Home() {
-	const [todos, setTodos] = useState(tasks);
+	const [todos, setTodos] = useState([{ label: "Add a Task", done: false }]);
 
-	const addToDo = name => {
-		const newToDos = [...todos, { name }];
+	const addToDo = label => {
+		const newToDos = [...todos, { label, done: false }];
 		setTodos(newToDos);
 		console.log(newToDos);
 	};
@@ -23,6 +17,34 @@ export function Home() {
 		newTodos.splice(index, 1);
 		setTodos(newTodos);
 	};
+	const fetchUrl = `https://assets.breatheco.de/apis/fake/todos/user/DavJosBer`;
+	useEffect(() => {
+		async function getToDO() {
+			let result = await fetch(fetchUrl, {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json"
+				}
+			})
+				.then(res => res.json())
+				.catch(err => console.log(err));
+			console.log(result);
+		}
+		getToDO();
+	}, []);
+	async function initToDo() {
+		let result = await fetch(fetchUrl, {
+			method: "PUT",
+			body: JSON.stringify(todos),
+			headers: {
+				"Content-Type": "application/json"
+			}
+		})
+			.then(res => res.json())
+			.catch(err => console.log(err));
+		console.log(result);
+	}
+	initToDo();
 	return (
 		<div className="text-center mt-5 row">
 			<div className="card mx-auto">
